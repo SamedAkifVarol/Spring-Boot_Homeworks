@@ -11,11 +11,11 @@ import java.util.List;
 @RestControllerAdvice
 public class CustomExceptionHandler {
 
-    @ExceptionHandler(RestaurantNotNullException.class)
-    public ResponseEntity<?> restaurantNotNull(RestaurantNotNullException restaurantNotNullException) {
+    @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<?> restaurantNotFound(RestaurantNotFoundException restaurantNotFoundException) {
         List<String> detail = new ArrayList<>();
-        detail.add(restaurantNotNullException.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse("Restaurant not Null",detail);
+        detail.add(restaurantNotFoundException.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("Restaurant Not Found",detail);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

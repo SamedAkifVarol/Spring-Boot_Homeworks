@@ -5,6 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.samedakifvarol.restaurant.data.RestaurantEntity;
 import org.samedakifvarol.restaurant.data.RestaurantRepository;
+import org.samedakifvarol.restaurant.exception.RestaurantNotFoundException;
 import org.samedakifvarol.restaurant.model.UpdateRestaurantModel;
 import org.samedakifvarol.restaurant.shared.RestaurantDto;
 import org.springframework.security.core.userdetails.User;
@@ -75,7 +76,7 @@ public class RestaurantServiceImpl implements RestaurantService{
     @Override
     public RestaurantDto getRestaurant(Long id) {
         Optional<RestaurantEntity> restaurantEntity = restaurantRepository.findById(id);
-        if (restaurantEntity == null) throw new UsernameNotFoundException("Restaurant not exist");
+        RestaurantEntity restaurantError = restaurantEntity.orElseThrow(() -> new RestaurantNotFoundException("Restaurant Id : " + id));
         RestaurantDto restaurantDto = new ModelMapper().map(restaurantEntity,RestaurantDto.class);
         return restaurantDto;
     }
@@ -84,7 +85,7 @@ public class RestaurantServiceImpl implements RestaurantService{
     public void delete(Long id) {
         boolean exists = restaurantRepository.existsById(id);
         if (!exists) {
-            throw new IllegalStateException("Restaurant with id " + id + " does not exist");
+            throw new RestaurantNotFoundException("Restaurant Id : " + id);
         }
         restaurantRepository.deleteById(id);
     }
@@ -92,7 +93,7 @@ public class RestaurantServiceImpl implements RestaurantService{
     @Override
     public UserDetails loadUserByUsername(String restaurantId) throws UsernameNotFoundException {
         RestaurantEntity restaurantEntity = restaurantRepository.findByRestaurantId(restaurantId);
-        if (restaurantEntity == null) throw new UsernameNotFoundException(restaurantId);
+        if (restaurantEntity == null) throw new RestaurantNotFoundException("RestaurantId or Password are not valid");
 
         return  new User(restaurantEntity.getRestaurantId(), restaurantEntity.getEncryptedPassword() ,
                 true,true,true,true, new ArrayList<>());
