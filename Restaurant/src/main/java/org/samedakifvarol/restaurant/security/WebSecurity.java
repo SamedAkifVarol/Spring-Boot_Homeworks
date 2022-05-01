@@ -20,16 +20,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     RestaurantService restaurantService;
     BCryptPasswordEncoder bCryptPasswordEncoder;
     Environment env;
-    
-    
-
-    public WebSecurity(RestaurantService restaurantService, BCryptPasswordEncoder bCryptPasswordEncoder,
-			Environment env) {
-		super();
-		this.restaurantService = restaurantService;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-		this.env = env;
-	}
 
 	@Override
     protected void configure(HttpSecurity http) throws Exception {

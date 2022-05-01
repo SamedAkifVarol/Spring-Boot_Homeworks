@@ -1,9 +1,11 @@
 package org.samedakifvarol.restaurant.controller;
 
 import lombok.AllArgsConstructor;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.samedakifvarol.restaurant.data.RestaurantEntity;
+import org.samedakifvarol.restaurant.data.RestaurantRepository;
 import org.samedakifvarol.restaurant.model.*;
 import org.samedakifvarol.restaurant.service.RestaurantService;
 import org.samedakifvarol.restaurant.shared.RestaurantDto;
@@ -11,17 +13,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/restaurant")
+@RequestMapping("/")
 @AllArgsConstructor
 public class RestaurantController {
 
     RestaurantService restaurantService;
+    RestaurantRepository restaurantRepository;
 
     @PostMapping
-    public ResponseEntity<AddRestaurantResponseModel> add(@RequestBody AddRestaurantRequestModel restaurantDetails){
+    public ResponseEntity<AddRestaurantResponseModel> add(@Valid @RequestBody AddRestaurantRequestModel restaurantDetails){
 
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -35,8 +39,9 @@ public class RestaurantController {
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<UpdateRestaurantModel> update(@PathVariable("id") Long id) {
-        RestaurantDto restaurantDto = restaurantService.update(id);
+    public ResponseEntity<UpdateRestaurantModel> update(@PathVariable("id") Long id,
+                                                        @Valid @RequestBody UpdateRestaurantModel restaurantDetails) {
+        RestaurantDto restaurantDto = restaurantService.update(restaurantDetails,id);
         UpdateRestaurantModel returnValue = new ModelMapper().map(restaurantDto,UpdateRestaurantModel.class);
         return  ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }

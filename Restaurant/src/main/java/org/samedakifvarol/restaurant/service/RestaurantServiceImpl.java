@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.*;
 
@@ -21,7 +22,6 @@ public class RestaurantServiceImpl implements RestaurantService{
 
     RestaurantRepository restaurantRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
-    List list;
 
     @Override
     public RestaurantDto add(RestaurantDto restaurantDetails) {
@@ -42,12 +42,28 @@ public class RestaurantServiceImpl implements RestaurantService{
     }
 
     @Override
-    public RestaurantDto update(Long id) {
-        Optional<RestaurantEntity> restaurantEntity = restaurantRepository.findById(id);
-        if (restaurantEntity == null) throw new UsernameNotFoundException("Restaurant not exist");
-        RestaurantDto restaurantDto = new ModelMapper().map(restaurantEntity,RestaurantDto.class);
+    public RestaurantDto update(UpdateRestaurantModel restaurantDetails ,Long id) {
+        if (restaurantRepository.findById(id).isPresent()){
+            RestaurantEntity existingRestaurant = restaurantRepository.findById(id).get();
 
-        return restaurantDto;
+            existingRestaurant.setName(restaurantDetails.getName());
+            existingRestaurant.setMenu(restaurantDetails.getMenu());
+            existingRestaurant.setItem(restaurantDetails.getItem());
+            existingRestaurant.setDistrict(restaurantDetails.getDistrict());
+            existingRestaurant.setCity(restaurantDetails.getCity());
+
+            RestaurantEntity updatedRestaurant = restaurantRepository.save(existingRestaurant);
+
+            return new RestaurantDto(updatedRestaurant.getName(),
+                    updatedRestaurant.getCity(),
+                    updatedRestaurant.getDistrict(),
+                    updatedRestaurant.getMenu(),
+                    updatedRestaurant.getItem(),
+                    updatedRestaurant.getRestaurantId(),
+                    updatedRestaurant.getEncryptedPassword());
+        }else {
+            return null;
+        }
     }
 
 

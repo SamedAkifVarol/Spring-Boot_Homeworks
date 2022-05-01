@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface RestaurantService extends UserDetailsService {
     RestaurantDto add(RestaurantDto restaurantDetails);
-    RestaurantDto update(Long id);
+    RestaurantDto update(UpdateRestaurantModel restaurantDetails ,Long id);
     List<RestaurantEntity> gets();
     RestaurantDto getRestaurant(Long id);
     void delete(Long id);
