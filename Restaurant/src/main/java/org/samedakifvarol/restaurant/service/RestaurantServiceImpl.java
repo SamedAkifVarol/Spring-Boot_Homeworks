@@ -6,14 +6,13 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.samedakifvarol.restaurant.data.RestaurantEntity;
 import org.samedakifvarol.restaurant.data.RestaurantRepository;
 import org.samedakifvarol.restaurant.exception.RestaurantNotFoundException;
-import org.samedakifvarol.restaurant.model.UpdateRestaurantModel;
+import org.samedakifvarol.restaurant.model.UpdateRestaurant;
 import org.samedakifvarol.restaurant.shared.RestaurantDto;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.util.*;
 
@@ -43,7 +42,7 @@ public class RestaurantServiceImpl implements RestaurantService{
     }
 
     @Override
-    public RestaurantDto update(UpdateRestaurantModel restaurantDetails ,Long id) {
+    public RestaurantDto update(UpdateRestaurant restaurantDetails , Long id) {
         if (restaurantRepository.findById(id).isPresent()){
             RestaurantEntity existingRestaurant = restaurantRepository.findById(id).get();
 
@@ -69,8 +68,10 @@ public class RestaurantServiceImpl implements RestaurantService{
 
 
     @Override
-    public List<RestaurantEntity> gets() {
-        return (List<RestaurantEntity>) restaurantRepository.findAll();
+    public RestaurantDto gets() {
+        RestaurantEntity restaurantEntity = restaurantRepository.findAll();
+        RestaurantDto restaurantDto = new ModelMapper().map(restaurantEntity,RestaurantDto.class);
+        return restaurantDto;
     }
 
     @Override
@@ -88,6 +89,14 @@ public class RestaurantServiceImpl implements RestaurantService{
             throw new RestaurantNotFoundException("Restaurant Id : " + id);
         }
         restaurantRepository.deleteById(id);
+    }
+
+    @Override
+    public RestaurantDto getRestaurantDetailsbyId(String Id) {
+        RestaurantEntity restaurantEntity = restaurantRepository.findByRestaurantId(Id);
+
+        if (restaurantEntity == null) throw new UsernameNotFoundException(Id);
+        return new ModelMapper().map(restaurantEntity,RestaurantDto.class);
     }
 
     @Override

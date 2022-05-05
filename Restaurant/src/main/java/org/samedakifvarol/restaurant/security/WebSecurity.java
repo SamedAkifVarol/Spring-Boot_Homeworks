@@ -30,7 +30,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter();
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(restaurantService,env);
         authenticationFilter.setFilterProcessesUrl(env.getProperty("login.url.path"));
         authenticationFilter.setAuthenticationManager(authenticationManager());
         return authenticationFilter;

@@ -2,6 +2,7 @@ package org.samedakifvarol.restaurant.controller;
 
 import lombok.AllArgsConstructor;
 
+import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.samedakifvarol.restaurant.data.RestaurantEntity;
@@ -25,7 +26,7 @@ public class RestaurantController {
     RestaurantRepository restaurantRepository;
 
     @PostMapping
-    public ResponseEntity<AddRestaurantResponseModel> add(@Valid @RequestBody AddRestaurantRequestModel restaurantDetails){
+    public ResponseEntity<AddRestaurantResponse> add(@Valid @RequestBody AddRestaurantRequest restaurantDetails){
 
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -33,28 +34,30 @@ public class RestaurantController {
         RestaurantDto restaurantDto = modelMapper.map(restaurantDetails,RestaurantDto.class);
         RestaurantDto addedRestaurant = restaurantService.add(restaurantDto);
 
-        AddRestaurantResponseModel returnValue =modelMapper.map(addedRestaurant,AddRestaurantResponseModel.class);
+        AddRestaurantResponse returnValue =modelMapper.map(addedRestaurant, AddRestaurantResponse.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<UpdateRestaurantModel> update(@PathVariable("id") Long id,
-                                                        @Valid @RequestBody UpdateRestaurantModel restaurantDetails) {
+    public ResponseEntity<UpdateRestaurant> update(@PathVariable("id") Long id,
+                                                   @Valid @RequestBody UpdateRestaurant restaurantDetails) {
         RestaurantDto restaurantDto = restaurantService.update(restaurantDetails,id);
-        UpdateRestaurantModel returnValue = new ModelMapper().map(restaurantDto,UpdateRestaurantModel.class);
+        UpdateRestaurant returnValue = new ModelMapper().map(restaurantDto, UpdateRestaurant.class);
         return  ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 
     @GetMapping
-    public List<RestaurantEntity> gets() {
-        return restaurantService.gets();
+    public ResponseEntity<GetRestaurantResponse> gets() {
+        RestaurantDto restaurantDto = restaurantService.gets();
+        GetRestaurantResponse returnValue = new ModelMapper().map(restaurantDto, GetRestaurantResponse.class);
+        return ResponseEntity.status(HttpStatus.FOUND).body(returnValue);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<GetRestaurantResponseModel> getRestaurant(@PathVariable("id") Long id){
+    public ResponseEntity<GetRestaurantResponse> getRestaurant(@PathVariable("id") Long id){
         RestaurantDto restaurantDto = restaurantService.getRestaurant(id);
-        GetRestaurantResponseModel returnValue = new ModelMapper().map(restaurantDto,GetRestaurantResponseModel.class);
+        GetRestaurantResponse returnValue = new ModelMapper().map(restaurantDto, GetRestaurantResponse.class);
         return ResponseEntity.status(HttpStatus.FOUND).body(returnValue);
     }
 
