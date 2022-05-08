@@ -18,4 +18,12 @@ public class CustomExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse("Restaurant Not Found",detail);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MenuNotFoundException.class)
+    public ResponseEntity<?> menuNotFound(MenuNotFoundException menuNotFoundException) {
+        List<String> detail = new ArrayList<>();
+        detail.add(menuNotFoundException.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("Menu Not Found", detail);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }

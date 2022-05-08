@@ -12,11 +12,11 @@ public class AddRestaurantRequest {
     private String city;
     @NotNull(message = "district can not be null")
     private String district;
-    @NotNull(message = "menu can not be null")
-    private String menu;
     @NotNull(message = "item can not be null")
     private String item;
     @NotNull(message = "password can not be null")
     private String password;
+    @NotNull(message = "menuId can not be null")
+    private Long menu_id;
 
 }

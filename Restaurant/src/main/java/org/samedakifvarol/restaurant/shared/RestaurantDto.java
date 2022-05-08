@@ -1,31 +1,20 @@
 package org.samedakifvarol.restaurant.shared;
 
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
+import org.samedakifvarol.restaurant.data.MenuEntity;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantDto implements Serializable {
-    private static final long serialVersionUID = 8440825047434056167L;
-    private String name,
-            city,
-            district,
-            menu,
-            item,
-            restaurantId,
-            password,
-            encryptedPassword;
-
-    public RestaurantDto(String name, String city, String district, String menu, String item, String restaurantId, String encryptedPassword) {
-        this.name = name;
-        this.city = city;
-        this.district = district;
-        this.menu = menu;
-        this.item = item;
-        this.restaurantId = restaurantId;
-        this.encryptedPassword = encryptedPassword;
-    }
+public class RestaurantDto {
+    private String name;
+    private String city;
+    private String district;
+    private String item;
+    private String restaurantId;
+    private String password;
+    private String encryptedPassword;
+    private Long menu_id;
 }

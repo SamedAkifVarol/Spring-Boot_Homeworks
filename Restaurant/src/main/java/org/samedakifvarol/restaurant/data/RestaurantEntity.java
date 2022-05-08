@@ -2,14 +2,15 @@ package org.samedakifvarol.restaurant.data;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 @Data
 @Entity
-@Table(name = "t_restaurants")
+@Table(name = "restaurant")
 public class RestaurantEntity implements Serializable {
 
 
@@ -17,64 +18,18 @@ public class RestaurantEntity implements Serializable {
     @Id
     @GeneratedValue
     private Long Id;
-    private String name,
-            city,
-            district,
-            menu,
-            item,
-            restaurantId,
-            encryptedPassword;
-	public Long getId() {
-		return Id;
-	}
-	public void setId(Long id) {
-		Id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getCity() {
-		return city;
-	}
-	public void setCity(String city) {
-		this.city = city;
-	}
-	public String getDistrict() {
-		return district;
-	}
-	public void setDistrict(String district) {
-		this.district = district;
-	}
-	public String getMenu() {
-		return menu;
-	}
-	public void setMenu(String menu) {
-		this.menu = menu;
-	}
-	public String getItem() {
-		return item;
-	}
-	public void setItem(String item) {
-		this.item = item;
-	}
-	public String getRestaurantId() {
-		return restaurantId;
-	}
-	public void setRestaurantId(String restaurantId) {
-		this.restaurantId = restaurantId;
-	}
-	public String getEncryptedPassword() {
-		return encryptedPassword;
-	}
-	public void setEncryptedPassword(String encryptedPassword) {
-		this.encryptedPassword = encryptedPassword;
-	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-    
-    
+    private String name;
+	private String city;
+	private String district;
+//	@OneToMany(mappedBy = "restaurant")
+//	private List<MenuEntity> menu = new ArrayList<>();
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "menu_id")
+	private MenuEntity menu;
+	private String item;
+	private String restaurantId;
+	private String encryptedPassword;
+
+    public void setMenu(String corbalar, String anaYemekler, String icecekler, String tatlilar) {
+    }
 }
