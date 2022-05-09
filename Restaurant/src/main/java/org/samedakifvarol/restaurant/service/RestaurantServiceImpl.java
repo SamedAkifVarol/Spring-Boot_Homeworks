@@ -1,19 +1,23 @@
 package org.samedakifvarol.restaurant.service;
 
 import lombok.AllArgsConstructor;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MappingContext;
 import org.samedakifvarol.restaurant.converter.RestaurantConverter;
 import org.samedakifvarol.restaurant.data.MenuEntity;
 import org.samedakifvarol.restaurant.data.MenuRepository;
 import org.samedakifvarol.restaurant.data.RestaurantEntity;
 import org.samedakifvarol.restaurant.data.RestaurantRepository;
 import org.samedakifvarol.restaurant.exception.RestaurantNotFoundException;
+import org.samedakifvarol.restaurant.model.GetRestaurantResponse;
 import org.samedakifvarol.restaurant.model.UpdateRestaurant;
 import org.samedakifvarol.restaurant.shared.MenuDto;
 import org.samedakifvarol.restaurant.shared.RestaurantDto;
 import org.samedakifvarol.restaurant.shared.RestaurantMenuDto;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -149,11 +153,9 @@ public class RestaurantServiceImpl implements RestaurantService{
 
     // Hepsini Getir --------------------------------------------------------------------------------
     @Override
-    public Page<RestaurantEntity> gets(Pageable page) {
-        return restaurantRepository.findAll(page);
-//        Page<GetRestaurantResponse> getRestaurantResponses = restaurants.stream().map(restaurant ->
-//                new ModelMapper().map(restaurant,GetRestaurantResponse.class)).collect(Collectors.toList());
-//        return getRestaurantResponses;
+    public Page<GetRestaurantResponse> gets(Pageable page) {
+        Page<GetRestaurantResponse> restaurantEntity = restaurantRepository.findAll(page).map(GetRestaurantResponse::new);
+        return  restaurantEntity;
     }
 
     //Birini Getir -----------------------------------------------------------------------------------------------------

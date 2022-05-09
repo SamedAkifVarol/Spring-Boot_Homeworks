@@ -14,7 +14,7 @@ import java.util.List;
 public interface RestaurantService extends UserDetailsService {
     RestaurantMenuDto add(RestaurantMenuDto restaurantDetails, Long id);
     RestaurantMenuDto update(UpdateRestaurant restaurantDetails , Long id);
-    Page<RestaurantEntity> gets(Pageable page);
+    Page<GetRestaurantResponse> gets(Pageable page);
     RestaurantDto getRestaurant(Long id);
     void delete(Long id);
     RestaurantDto getRestaurantDetailsbyId(String Id);

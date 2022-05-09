@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/")
@@ -95,8 +97,11 @@ public class RestaurantController {
 
     // Restorantları Getir -----------------------------------------------
     @GetMapping
-    public ResponseEntity<Page<RestaurantEntity>> gets(Pageable page) {
-        Page<RestaurantEntity> restaurants =  restaurantService.gets(page);
+    public ResponseEntity<Page<GetRestaurantResponse>> gets(Pageable page) {
+                Page<GetRestaurantResponse> restaurants = restaurantService.gets(page);
+                //.stream()
+                //.map(get -> new ModelMapper().map(get,GetRestaurantResponse.class)).collect(Collectors.toList());
+
         return ResponseEntity.status(HttpStatus.FOUND).body(restaurants);
     }
 
