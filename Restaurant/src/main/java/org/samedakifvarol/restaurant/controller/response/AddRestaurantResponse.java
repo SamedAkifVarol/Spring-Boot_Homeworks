@@ -1,4 +1,4 @@
-package org.samedakifvarol.restaurant.model;
+package org.samedakifvarol.restaurant.controller.response;
 
 import lombok.Data;
 

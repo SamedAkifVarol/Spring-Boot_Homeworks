@@ -1,18 +1,16 @@
 package org.samedakifvarol.restaurant.service;
 
-import org.samedakifvarol.restaurant.data.RestaurantEntity;
-import org.samedakifvarol.restaurant.model.GetRestaurantResponse;
-import org.samedakifvarol.restaurant.model.UpdateRestaurant;
-import org.samedakifvarol.restaurant.shared.RestaurantDto;
-import org.samedakifvarol.restaurant.shared.RestaurantMenuDto;
+import org.samedakifvarol.restaurant.controller.request.AddRestaurantRequest;
+import org.samedakifvarol.restaurant.controller.response.AddRestaurantResponse;
+import org.samedakifvarol.restaurant.controller.response.GetRestaurantResponse;
+import org.samedakifvarol.restaurant.controller.response.UpdateRestaurant;
+import org.samedakifvarol.restaurant.model.dto.RestaurantDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.List;
-
 public interface RestaurantService extends UserDetailsService {
-    RestaurantMenuDto add(RestaurantMenuDto restaurantDetails, Long id);
+    AddRestaurantResponse add(AddRestaurantRequest addRestaurantRequest);
     RestaurantMenuDto update(UpdateRestaurant restaurantDetails , Long id);
     Page<GetRestaurantResponse> gets(Pageable page);
     RestaurantDto getRestaurant(Long id);

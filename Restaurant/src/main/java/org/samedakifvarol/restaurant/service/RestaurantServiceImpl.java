@@ -1,23 +1,18 @@
 package org.samedakifvarol.restaurant.service;
 
 import lombok.AllArgsConstructor;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MappingContext;
-import org.samedakifvarol.restaurant.converter.RestaurantConverter;
-import org.samedakifvarol.restaurant.data.MenuEntity;
-import org.samedakifvarol.restaurant.data.MenuRepository;
-import org.samedakifvarol.restaurant.data.RestaurantEntity;
-import org.samedakifvarol.restaurant.data.RestaurantRepository;
+import org.samedakifvarol.restaurant.controller.request.AddRestaurantRequest;
+import org.samedakifvarol.restaurant.controller.response.AddRestaurantResponse;
+import org.samedakifvarol.restaurant.model.entity.RestaurantEntity;
+import org.samedakifvarol.restaurant.repository.MenuRepository;
+import org.samedakifvarol.restaurant.repository.RestaurantRepository;
 import org.samedakifvarol.restaurant.exception.RestaurantNotFoundException;
-import org.samedakifvarol.restaurant.model.GetRestaurantResponse;
-import org.samedakifvarol.restaurant.model.UpdateRestaurant;
-import org.samedakifvarol.restaurant.shared.MenuDto;
-import org.samedakifvarol.restaurant.shared.RestaurantDto;
-import org.samedakifvarol.restaurant.shared.RestaurantMenuDto;
+import org.samedakifvarol.restaurant.controller.response.GetRestaurantResponse;
+import org.samedakifvarol.restaurant.controller.response.UpdateRestaurant;
+import org.samedakifvarol.restaurant.model.dto.RestaurantDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,125 +26,79 @@ import java.util.*;
 @AllArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService{
 
-    RestaurantRepository restaurantRepository;
-    BCryptPasswordEncoder bCryptPasswordEncoder;
-    MenuRepository menuRepository;
-    MenuService menuService;
-    //ModelMapper modelMapper = new ModelMapper();
+    private RestaurantRepository restaurantRepository;
+    private MenuRepository menuRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    //Restaurant Ekleme
     @Override
-    public RestaurantMenuDto add(RestaurantMenuDto restaurantDetails,Long id) {
+    public AddRestaurantResponse add(AddRestaurantRequest restaurantDetails) {
 
-        // RestaurantId ve EncryptedPassword Oluşturuluyor
-        restaurantDetails.setRestaurantId(UUID.randomUUID().toString());
-        restaurantDetails.setEncryptedPassword(bCryptPasswordEncoder.encode(restaurantDetails.getPassword()));
-
-        // ModelMapper Objesi Oluşturuluyor
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        //MenuEntity class'ından istenilen id çekiliyor.
-        Optional<MenuEntity> menuEntity = menuRepository.findById(id);
+        RestaurantDto restaurantDto = modelMapper.map(restaurantDetails,RestaurantDto.class);
 
-        //menuEntity Optional özelliğini devredışı bırakmak için "yeni obje" oluşturdum.
-        MenuEntity menu = modelMapper.map(menuEntity,MenuEntity.class);
+        restaurantDto.setRestaurantId(UUID.randomUUID().toString());
+        restaurantDto.setEncryptedPassword(bCryptPasswordEncoder.encode(restaurantDetails.getPassword()));
 
-        //RestaurantEntity objesi oluşturulup,setMenu("yeni obje") eklendi
-        RestaurantEntity restaurantEntity = modelMapper.map(restaurantDetails, RestaurantEntity.class);
-        restaurantEntity.setMenu(menu);
+        RestaurantEntity restaurantEntity = modelMapper.map(restaurantDto,RestaurantEntity.class);
 
-        //DataBase'e eklendi.
-        restaurantRepository.save(restaurantEntity);
-
-        // Controller için uygun obje oluşturalım
-        RestaurantMenuDto returnValue = new RestaurantMenuDto(
-                restaurantEntity.getName(),
-                restaurantEntity.getCity(),
-                restaurantEntity.getDistrict(),
-                restaurantEntity.getItem(),
-                restaurantEntity.getRestaurantId(),
-                restaurantEntity.getEncryptedPassword(),
-                menu.getCorbalar(),
-                menu.getAnaYemekler(),
-                menu.getIcecekler(),
-                menu.getIcecekler(),
-                restaurantDetails.getPassword()
-
-        );
-
-        return returnValue;
+        return null;
     }
 
-    // Restaurant Güncelle ---------------------------------------------------------
-
-    /*
-    1-) Girilen id doğru mu diye kontrol et +
-    2-) Doğruysa; Restaurant ve menü bilgilerini değiştirebil. +
-    3-) Menü bilgileri hali hazırda yoksa, yeni bir menü oluşturabil.
-    4-) Bilgileri PostMan'de bastır.
-     */
     @Override
-    public RestaurantMenuDto update(UpdateRestaurant restaurantDetails , Long id) {
-        Optional<RestaurantEntity> optionalRestaurantEntity = restaurantRepository.findById(id);
-        if (optionalRestaurantEntity.isPresent()){
-            RestaurantEntity restaurant = optionalRestaurantEntity.get();
-
-            //Seçilen restorantın menu bilgileri elde edildi.
-            Optional<MenuEntity> menuEntity = menuRepository.findById(restaurant.getMenu().getId());
-            MenuEntity menu = menuEntity.get();// id 10 olan menü
-
-            //Menu bilgileri Farklı mı, diye kontrol edildi.
-            // Aynı ise ;
-            if (restaurantDetails.getCorbalar().equals(menu.getCorbalar()) &&
-                restaurantDetails.getIcecekler().equals(menu.getIcecekler()) &&
-                restaurantDetails.getTatlilar().equals(menu.getTatlilar()) &&
-                restaurantDetails.getAnaYemekler().equals(menu.getAnaYemekler())) {
-
-                //Restaurant Bilgileri -----
-                restaurant.setName(restaurantDetails.getName());
-                restaurant.setItem(restaurantDetails.getItem());
-                restaurant.setDistrict(restaurantDetails.getDistrict());
-                restaurant.setCity(restaurantDetails.getCity());
-                restaurant.setMenu(menu);
-
-                //Menu kaydedildi
-                restaurantRepository.save(restaurant);
-
-                return RestaurantConverter.convert(restaurant);
-
-            //Menü Bilgileri Farklı ise;
-            } else {
-                //Menuyu güncellemek için DTO objesi oluşturuldu
-                MenuDto menuDto = new MenuDto();
-                //Menu güncellendi
-                menuDto.setAnaYemekler(restaurantDetails.getAnaYemekler());
-                menuDto.setTatlilar(restaurantDetails.getTatlilar());
-                menuDto.setIcecekler(restaurantDetails.getIcecekler());
-                menuDto.setCorbalar(restaurantDetails.getCorbalar());
-
-                //DataBase'e eklendi.
-                menuService.add(menuDto);
-
-                //Restaurant tablosundaki menü_id bilgisini değiştirmek için ;
-                //Bunu çağırıyoruz
-                MenuEntity yeniMenu = menuRepository.findTopByOrderByIdDesc();
-
-                //Restaurant Bilgileri -----
-                restaurant.setName(restaurantDetails.getName());
-                restaurant.setItem(restaurantDetails.getItem());
-                restaurant.setDistrict(restaurantDetails.getDistrict());
-                restaurant.setCity(restaurantDetails.getCity());
-                restaurant.setMenu(yeniMenu);
-
-                //Menu kaydedildi
-                restaurantRepository.save(restaurant);
-
-                return RestaurantConverter.convert(restaurant);
-            }
-        }
-        throw new RestaurantNotFoundException("Restaurant not Found");
+    public RestaurantMenuDto update(UpdateRestaurant restaurantDetails, Long id) {
+        return null;
     }
+
+//    @Override
+//    public RestaurantMenuDto update(UpdateRestaurant restaurantDetails , Long id) {
+//        Optional<RestaurantEntity> optionalRestaurantEntity = restaurantRepository.findById(id);
+//        if (optionalRestaurantEntity.isPresent()){
+//            RestaurantEntity restaurant = optionalRestaurantEntity.get();
+
+            //Optional<MenuEntity> menuEntity = menuRepository.findById(restaurant.getMenu().getId());
+            //MenuEntity menu = menuEntity.get();// id 10 olan menü
+
+//            if (restaurantDetails.getSoups().equals(menu.getSoups()) &&
+//                restaurantDetails.getDrinks().equals(menu.getDrinks()) &&
+//                restaurantDetails.getDeserts().equals(menu.getDeserts()) &&
+//                restaurantDetails.getMainDishes().equals(menu.getMainDishes())) {
+//
+//                //Restaurant Bilgileri -----
+//                restaurant.setName(restaurantDetails.getName());
+//                restaurant.setItem(restaurantDetails.getItem());
+//                restaurant.setDistrict(restaurantDetails.getDistrict());
+//                restaurant.setCity(restaurantDetails.getCity());
+//                //restaurant.setMenu(menu);
+//
+//                restaurantRepository.save(restaurant);
+//
+//                return RestaurantConverter.convert(restaurant);
+//
+//            } else {
+//                MenuDto menuDto = new MenuDto();
+//                menuDto.setMainDishes(restaurantDetails.getMainDishes());
+//                menuDto.setDeserts(restaurantDetails.getDeserts());
+//                menuDto.setDrinks(restaurantDetails.getDrinks());
+//                menuDto.setSoups(restaurantDetails.getSoups());
+//
+//                menuService.add(menuDto);
+//
+//                MenuEntity yeniMenu = menuRepository.findTopByOrderByIdDesc();
+//
+//                restaurant.setName(restaurantDetails.getName());
+//                restaurant.setItem(restaurantDetails.getItem());
+//                restaurant.setDistrict(restaurantDetails.getDistrict());
+//                restaurant.setCity(restaurantDetails.getCity());
+//                restaurantRepository.save(restaurant);
+//
+//                return RestaurantConverter.convert(restaurant);
+//            }
+//        }
+//        throw new RestaurantNotFoundException("Restaurant not Found");
+//    }
+
 
     // Hepsini Getir --------------------------------------------------------------------------------
     @Override

@@ -1,10 +1,10 @@
-package org.samedakifvarol.restaurant.model;
+package org.samedakifvarol.restaurant.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.samedakifvarol.restaurant.data.MenuEntity;
-import org.samedakifvarol.restaurant.data.RestaurantEntity;
+import org.samedakifvarol.restaurant.model.entity.MenuEntity;
+import org.samedakifvarol.restaurant.model.entity.RestaurantEntity;
 
 @Data
 @AllArgsConstructor
@@ -24,6 +24,5 @@ public class GetRestaurantResponse {
         this.district=restaurantEntity.getDistrict();
         this.item=restaurantEntity.getItem();
         this.restaurantId=restaurantEntity.getRestaurantId();
-        this.menu=restaurantEntity.getMenu();
     }
 }
