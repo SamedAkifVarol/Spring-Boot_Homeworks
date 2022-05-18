@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface RestaurantService extends UserDetailsService {
     AddRestaurantResponse add(AddRestaurantRequest addRestaurantRequest);
-    RestaurantMenuDto update(UpdateRestaurant restaurantDetails , Long id);
+    UpdateRestaurant update(UpdateRestaurant restaurantDetails , Long id);
     Page<GetRestaurantResponse> gets(Pageable page);
-    RestaurantDto getRestaurant(Long id);
+    GetRestaurantResponse getRestaurant(Long id);
     void delete(Long id);
     RestaurantDto getRestaurantDetailsbyId(String Id);
 

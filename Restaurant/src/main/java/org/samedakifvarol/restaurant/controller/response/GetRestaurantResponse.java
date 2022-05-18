@@ -3,6 +3,7 @@ package org.samedakifvarol.restaurant.controller.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.samedakifvarol.restaurant.model.dto.MenuDto;
 import org.samedakifvarol.restaurant.model.entity.MenuEntity;
 import org.samedakifvarol.restaurant.model.entity.RestaurantEntity;
 
@@ -16,7 +17,7 @@ public class GetRestaurantResponse {
     private String district;
     private String item;
     private String restaurantId;
-    private MenuEntity menu;
+    private MenuDto menu;
 
     public GetRestaurantResponse(RestaurantEntity restaurantEntity) {
         this.name=restaurantEntity.getName();

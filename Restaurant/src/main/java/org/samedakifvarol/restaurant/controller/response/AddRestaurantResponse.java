@@ -1,8 +1,10 @@
 package org.samedakifvarol.restaurant.controller.response;
 
 import lombok.Data;
+import org.samedakifvarol.restaurant.model.dto.MenuDto;
 
-import java.awt.*;
+import java.util.List;
+
 
 @Data
 public class AddRestaurantResponse {
@@ -11,9 +13,6 @@ public class AddRestaurantResponse {
     private String district;
     private String item;
     private String restaurantId;
-    private String corbalar;
-    private String anaYemekler;
-    private String tatlilar;
-    private String icecekler;
+    private MenuDto menuDto;
 
 }

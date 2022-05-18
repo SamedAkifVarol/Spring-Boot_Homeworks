@@ -2,15 +2,23 @@ package org.samedakifvarol.restaurant.controller.response;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class UpdateRestaurant {
+    @NotNull
     private String name;
+
+    @NotNull
     private String city;
+
+    @NotNull
     private String district;
+
+    @NotNull
     private String item;
-    // Menu bilgileri -------------------
-    private String soups;
-    private String mainDishes;
-    private String Deserts;
-    private String Drinks;
+
+    @NotNull
+    private Long menu_id;
+
 }
